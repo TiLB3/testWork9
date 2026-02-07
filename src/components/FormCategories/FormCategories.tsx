@@ -3,31 +3,35 @@ import {useAppDispatch, useAppSelector} from "../../app/store/hooks";
 import {
   addCategory,
   editCategory,
-  fetchAllCategories,
+  fetchAllCategories, getCategories,
   getLoadingForm
 } from "../../app/Features/categorySlice.ts";
 import {toast} from "react-toastify";
 import {Button, Grid, TextField} from "@mui/material";
 import SaveIcon from '@mui/icons-material/Save';
 import type {ICategoryMutation} from "../../types";
+import {updateTransaction} from "../../app/Features/transactionSlice.ts";
 
 
 interface Props {
   isEdit?: boolean;
   defaultValues?: ICategoryMutation;
   closeModal: () => void;
-  id: string;
+  id?: string;
 }
 
-const FormCategories: React.FC<Props> = ({isEdit,
-                                         defaultValues = {
-                                           type: '',
-                                           name: "",
-                                         },closeModal,id}) => {
+const FormCategories: React.FC<Props> = ({
+                                           isEdit,
+                                           defaultValues = {
+                                             type: '',
+                                             name: "",
+                                           }, closeModal, id
+                                         }) => {
 
   const [form, setForm] = useState<ICategoryMutation>({...defaultValues});
   const loading = useAppSelector(getLoadingForm);
   const dispatch = useAppDispatch();
+  const categories = useAppSelector(getCategories);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,12 +41,13 @@ const FormCategories: React.FC<Props> = ({isEdit,
     }
 
     if (isEdit) {
-      await dispatch(editCategory({id: id, editedCategory: form}));
-      //когда сделаешь транзакции
-      // dispatch(updateCartDishes(dishes));
+      if (id) {
+        await dispatch(editCategory({id: id, editedCategory: form}));
+        dispatch(updateTransaction(categories));
+      }
     } else {
       await dispatch(addCategory(form));
-      // dispatch(updateCartDishes(dishes));
+      dispatch(updateTransaction(categories));
     }
 
     await dispatch(fetchAllCategories());

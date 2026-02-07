@@ -1,7 +1,12 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSlice,
+  type PayloadAction
+} from "@reduxjs/toolkit";
 import {axiosApi} from "../../axiosApi.ts";
 import type {RootState} from "../store/store.ts";
 import type {
+  ICategory,
   ITransaction,
   ITransactionApi,
   ITransactionWithoutId
@@ -28,7 +33,15 @@ const initialState: ITransactionSlice = {
 const transactionSlice = createSlice({
   name: "transactions",
   initialState,
-  reducers: {},
+  reducers: {
+    updateTransaction: (state, action: PayloadAction<ICategory[]>) => {
+      const categories = action.payload;
+
+      state.transactions = state.transactions.filter(transaction => {
+        return categories.some(category => category.id === transaction.category);
+      });
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchAllTransactions.pending, (state) => {
       state.loading.fetchAllTransactionLoading = true;
@@ -128,3 +141,4 @@ export const getTransactions = (state: RootState) => state.transactions.transact
 
 
 export const transactionReducer = transactionSlice.reducer;
+export const {updateTransaction} = transactionSlice.actions;
