@@ -1,22 +1,28 @@
-interface ICategory{
+export interface ICategory {
   type: string;
   name: string;
   id: string;
 }
 
-type ICategoryMutation = Omit<ICategory, "id">;
+export type ICategoryMutation = Omit<ICategory, "id">;
 
-interface ICategoryApi {
+export interface ICategoryApi {
   [key: string]: ICategoryMutation;
 }
 
-interface ITransaction {
+export interface ITransaction {
   category: string;
   amount: number;
   createdAt: string;
 }
 
-interface ITransactionApi {
+export interface ITransactionMutation {
+  category: string;
+  amount: number;
+  type: string;
+}
+
+export interface ITransactionApi {
   [key: string]: ITransaction;
 }
 
