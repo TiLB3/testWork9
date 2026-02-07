@@ -118,8 +118,10 @@ const TransactionCard: React.FC<Props> = ({
               loadingPosition="end"
               onClick={async (e) => {
                 e.stopPropagation()
-                await dispatch(deleteTransactionById(id));
-                await dispatch(fetchAllTransactions());
+                if (confirm("Are you sure you want to delete this transaction?")) {
+                  await dispatch(deleteTransactionById(id));
+                  await dispatch(fetchAllTransactions());
+                }
               }}
             >
               Delete

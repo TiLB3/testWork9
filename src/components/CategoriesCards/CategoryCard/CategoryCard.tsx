@@ -61,7 +61,7 @@ const CategoryCard: React.FC<Props> = ({type, name, id}) => {
               sx={{
                 ml: "auto",
                 color: type === "expense" ? "#ff1744" : "#00e676"
-            }}
+              }}
             >
               {type}
             </Typography>
@@ -82,8 +82,10 @@ const CategoryCard: React.FC<Props> = ({type, name, id}) => {
               loadingPosition="end"
               onClick={async (e) => {
                 e.stopPropagation()
-                await dispatch(deleteCategoryById(id));
-                await dispatch(fetchAllCategories());
+                if (confirm("Are you sure you want to delete this category?")) {
+                  await dispatch(deleteCategoryById(id));
+                  await dispatch(fetchAllCategories());
+                }
               }}
             >
               Delete
