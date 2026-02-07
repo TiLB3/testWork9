@@ -1,6 +1,7 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {axiosApi} from "../../axiosApi.ts";
 import type {RootState} from "../store/store.ts";
+import type {ICategory, ICategoryApi, ICategoryMutation} from "../../types";
 
 interface ICategorySlice {
   categories: ICategory[];
@@ -78,10 +79,11 @@ const categorySlice = createSlice({
 })
 
 
-export const fetchAllCategories = createAsyncThunk<ICategory[]>(
+export const fetchAllCategories = createAsyncThunk<ICategory[], void | string>(
   "categories/fetchAllCategories",
-  async () => {
-    const {data: response} = await axiosApi.get<ICategoryApi | null>("/categories.json");
+  async (categories) => {
+    const {data: response} = await axiosApi<ICategoryApi | null>(categories ? `/categories.json?orderBy="type"&equalTo="${categories}"` : "/categories.json");
+
 
     if (response) {
       return Object.keys(response).map((categoryId) => {

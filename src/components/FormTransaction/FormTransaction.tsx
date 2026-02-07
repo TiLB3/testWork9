@@ -6,8 +6,13 @@ import SaveIcon from '@mui/icons-material/Save';
 import type {ITransactionMutation} from "../../types";
 import {
   fetchAllCategories,
-  getLoadingForm
+  getCategories
 } from "../../app/Features/categorySlice.ts";
+import {
+  addTransaction,
+  fetchAllTransactions,
+  getLoadingFormTransaction
+} from "../../app/Features/transactionSlice.ts";
 
 
 interface Props {
@@ -26,8 +31,9 @@ const FormTransaction: React.FC<Props> = ({
                                           }) => {
 
   const [form, setForm] = useState<ITransactionMutation>({...defaultValues});
-  const loading = useAppSelector(getLoadingForm);
+  const loading = useAppSelector(getLoadingFormTransaction);
   const dispatch = useAppDispatch();
+  const categories = useAppSelector(getCategories);
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,20 +45,23 @@ const FormTransaction: React.FC<Props> = ({
     if (isEdit) {
       // if (category) await dispatch(editCategory({id: category.id, editedCategory: form}));
     } else {
-      // await dispatch(addCategory(form));
+      const {type, ...rest} = form;
+      await dispatch(addTransaction({...rest, createdAt: new Date().toISOString(), amount: Number(form.amount)}));
     }
-
-    await dispatch(fetchAllCategories());
+    await dispatch(fetchAllTransactions());
     setForm({category: '', amount: 0, type: ""});
     closeModal();
   }
 
-  const onChangeField = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const onChangeField = async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const {name, value} = e.target;
     if(name === "amount" && Number(value) < 0) return
 
+    if(name === "type") {
+      await dispatch(fetchAllCategories(value));
+    }
+
     setForm({...form, [name]: value});
-    console.log(form)
   }
 
   return (
@@ -101,7 +110,9 @@ const FormTransaction: React.FC<Props> = ({
               value=""
             >Select categories
             </option>
-
+            {categories.map(category => (
+              <option key={category.id} value={category.id}>{category.name}</option>
+            ))}
           </select>
         </Grid>
         <Grid size={12}>

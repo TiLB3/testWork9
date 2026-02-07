@@ -116,7 +116,7 @@ export const editTransaction = createAsyncThunk<void, {
 );
 
 
-export const getLoadingForm = (state: RootState) => state.transactions.loading.addTransactionLoading;
+export const getLoadingFormTransaction = (state: RootState) => state.transactions.loading.addTransactionLoading;
 export const getLoadingAllTransactions = (state: RootState) => state.transactions.loading.fetchAllTransactionLoading;
 export const getLoadingDelete = (state: RootState) => state.transactions.loading.deleteTransactionLoading;
 export const getTransactions = (state: RootState) => state.transactions.transactions;
