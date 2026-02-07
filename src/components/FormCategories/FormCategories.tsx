@@ -4,7 +4,6 @@ import {
   addCategory,
   editCategory,
   fetchAllCategories,
-  getCategory,
   getLoadingForm
 } from "../../app/Features/categorySlice.ts";
 import {toast} from "react-toastify";
@@ -17,17 +16,17 @@ interface Props {
   isEdit?: boolean;
   defaultValues?: ICategoryMutation;
   closeModal: () => void;
+  id: string;
 }
 
 const FormCategories: React.FC<Props> = ({isEdit,
                                          defaultValues = {
                                            type: '',
                                            name: "",
-                                         },closeModal}) => {
+                                         },closeModal,id}) => {
 
   const [form, setForm] = useState<ICategoryMutation>({...defaultValues});
   const loading = useAppSelector(getLoadingForm);
-  const category = useAppSelector(getCategory);
   const dispatch = useAppDispatch();
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -38,7 +37,7 @@ const FormCategories: React.FC<Props> = ({isEdit,
     }
 
     if (isEdit) {
-      if (category) await dispatch(editCategory({id: category.id, editedCategory: form}));
+      await dispatch(editCategory({id: id, editedCategory: form}));
       //когда сделаешь транзакции
       // dispatch(updateCartDishes(dishes));
     } else {

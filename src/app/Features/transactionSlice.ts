@@ -1,7 +1,11 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {axiosApi} from "../../axiosApi.ts";
 import type {RootState} from "../store/store.ts";
-import type {ITransaction, ITransactionApi} from "../../types";
+import type {
+  ITransaction,
+  ITransactionApi,
+  ITransactionWithoutId
+} from "../../types";
 
 interface ITransactionSlice {
   transactions: ITransaction[];
@@ -91,7 +95,7 @@ export const fetchAllTransactions = createAsyncThunk<ITransaction[]>(
 );
 
 
-export const addTransaction = createAsyncThunk<void, ITransaction>(
+export const addTransaction = createAsyncThunk<void, ITransactionWithoutId>(
   "transactions/addTransaction",
   async (formCategory) => {
     await axiosApi.post("/transactions.json", formCategory);
@@ -101,13 +105,14 @@ export const addTransaction = createAsyncThunk<void, ITransaction>(
 export const deleteTransactionById = createAsyncThunk<void, string>(
   "transactions/deleteTransactionById",
   async (id) => {
+
     await axiosApi.delete(`/transactions/${id}.json`);
   }
 );
 
 export const editTransaction = createAsyncThunk<void, {
   id: string,
-  editedTransactions: ITransaction,
+  editedTransactions: ITransactionWithoutId,
 }>(
   "transactions/editTransaction",
   async ({id, editedTransactions}) => {
@@ -118,7 +123,7 @@ export const editTransaction = createAsyncThunk<void, {
 
 export const getLoadingFormTransaction = (state: RootState) => state.transactions.loading.addTransactionLoading;
 export const getLoadingAllTransactions = (state: RootState) => state.transactions.loading.fetchAllTransactionLoading;
-export const getLoadingDelete = (state: RootState) => state.transactions.loading.deleteTransactionLoading;
+export const getLoadingDeleteTransactios = (state: RootState) => state.transactions.loading.deleteTransactionLoading;
 export const getTransactions = (state: RootState) => state.transactions.transactions;
 
 

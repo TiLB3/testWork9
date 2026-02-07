@@ -58,7 +58,10 @@ const CategoryCard: React.FC<Props> = ({type, name, id}) => {
               gutterBottom
               variant="h5"
               component="div"
-              sx={{ml: "auto"}}
+              sx={{
+                ml: "auto",
+                color: type === "expense" ? "#ff1744" : "#00e676"
+            }}
             >
               {type}
             </Typography>
@@ -112,6 +115,7 @@ const CategoryCard: React.FC<Props> = ({type, name, id}) => {
           <FormCategories
             isEdit={true}
             defaultValues={{type, name}}
+            id={id}
             closeModal={() => setIsOpen(prevState => !prevState)}
           />
           <Box

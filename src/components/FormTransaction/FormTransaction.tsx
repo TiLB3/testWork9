@@ -9,7 +9,7 @@ import {
   getCategories
 } from "../../app/Features/categorySlice.ts";
 import {
-  addTransaction,
+  addTransaction, editTransaction,
   fetchAllTransactions,
   getLoadingFormTransaction
 } from "../../app/Features/transactionSlice.ts";
@@ -19,6 +19,8 @@ interface Props {
   isEdit?: boolean;
   defaultValues?: ITransactionMutation;
   closeModal: () => void;
+  id: string;
+  createdAt: string;
 }
 
 const FormTransaction: React.FC<Props> = ({
@@ -27,7 +29,7 @@ const FormTransaction: React.FC<Props> = ({
                                               type: "",
                                               category: '',
                                               amount: 0,
-                                            }, closeModal
+                                            }, closeModal, id, createdAt
                                           }) => {
 
   const [form, setForm] = useState<ITransactionMutation>({...defaultValues});
@@ -43,10 +45,21 @@ const FormTransaction: React.FC<Props> = ({
     }
 
     if (isEdit) {
-      // if (category) await dispatch(editCategory({id: category.id, editedCategory: form}));
+      await dispatch(editTransaction({
+        id: id,
+        editedTransactions: {
+          ...form,
+          createdAt: createdAt
+        },
+
+      }));
     } else {
       const {type, ...rest} = form;
-      await dispatch(addTransaction({...rest, createdAt: new Date().toISOString(), amount: Number(form.amount)}));
+      await dispatch(addTransaction({
+        ...rest,
+        createdAt: new Date().toISOString(),
+        amount: Number(form.amount)
+      }));
     }
     await dispatch(fetchAllTransactions());
     setForm({category: '', amount: 0, type: ""});
@@ -55,9 +68,9 @@ const FormTransaction: React.FC<Props> = ({
 
   const onChangeField = async (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const {name, value} = e.target;
-    if(name === "amount" && Number(value) < 0) return
+    if (name === "amount" && Number(value) < 0) return
 
-    if(name === "type") {
+    if (name === "type") {
       await dispatch(fetchAllCategories(value));
     }
 
@@ -111,7 +124,10 @@ const FormTransaction: React.FC<Props> = ({
             >Select categories
             </option>
             {categories.map(category => (
-              <option key={category.id} value={category.id}>{category.name}</option>
+              <option
+                key={category.id}
+                value={category.id}
+              >{category.name}</option>
             ))}
           </select>
         </Grid>

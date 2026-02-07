@@ -14,6 +14,14 @@ export interface ITransaction {
   category: string;
   amount: number;
   createdAt: string;
+  id: string;
+}
+
+
+export interface ITransactionWithoutId {
+  category: string;
+  amount: number;
+  createdAt: string;
 }
 
 export interface ITransactionMutation {
@@ -23,6 +31,6 @@ export interface ITransactionMutation {
 }
 
 export interface ITransactionApi {
-  [key: string]: ITransaction;
+  [key: string]: ITransactionWithoutId;
 }
 
