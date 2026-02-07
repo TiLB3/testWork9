@@ -49,7 +49,8 @@ const FormTransaction: React.FC<Props> = ({
         id: id,
         editedTransactions: {
           ...form,
-          createdAt: createdAt
+          createdAt: createdAt,
+          amount: Number(form.amount)
         },
 
       }));
