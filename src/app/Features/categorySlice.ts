@@ -1,5 +1,6 @@
 import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
 import {axiosApi} from "../../axiosApi.ts";
+import type {RootState} from "../store/store.ts";
 
 interface ICategorySlice {
   categories: ICategory[];
@@ -7,7 +8,6 @@ interface ICategorySlice {
   loading: {
     addCategoryLoading: boolean;
     deleteCategoryLoading: boolean;
-    editCategoryLoading: boolean;
     fetchAllCategoryLoading: boolean;
   };
 }
@@ -18,7 +18,6 @@ const initialState: ICategorySlice = {
   loading: {
     addCategoryLoading: false,
     deleteCategoryLoading: false,
-    editCategoryLoading: false,
     fetchAllCategoryLoading: false,
   }
 }
@@ -44,19 +43,6 @@ const categorySlice = createSlice({
       state.loading.fetchAllCategoryLoading = false;
     });
 
-
-    builder.addCase(getCategoryById.pending, (state) => {
-      state.loading.fetchAllCategoryLoading = true;
-    });
-    builder.addCase(getCategoryById.fulfilled, (state,{payload}) => {
-      state.loading.fetchAllCategoryLoading = false;
-      state.category = payload;
-    });
-    builder.addCase(getCategoryById.rejected, (state) => {
-      state.loading.fetchAllCategoryLoading = false;
-    });
-
-
     builder.addCase(addCategory.pending, (state) => {
       state.loading.addCategoryLoading = true;
     });
@@ -80,13 +66,13 @@ const categorySlice = createSlice({
 
 
     builder.addCase(editCategory.pending, (state) => {
-      state.loading.editCategoryLoading = true;
+      state.loading.addCategoryLoading = true;
     });
     builder.addCase(editCategory.fulfilled, (state) => {
-      state.loading.editCategoryLoading = false;
+      state.loading.addCategoryLoading = false;
     });
     builder.addCase(editCategory.rejected, (state) => {
-      state.loading.editCategoryLoading = false;
+      state.loading.addCategoryLoading = false;
     });
   }
 })
@@ -110,19 +96,6 @@ export const fetchAllCategories = createAsyncThunk<ICategory[]>(
   }
 );
 
-export const getCategoryById = createAsyncThunk<ICategory | null, string>(
-  "categories/getCategoryById",
-  async (id) => {
-    const {data: response} = await axiosApi.get<ICategoryMutation>(`/categories/${id}.json`);
-
-    if (response === null) return null;
-
-    return {
-      ...response,
-      id: id
-    };
-  }
-);
 
 export const addCategory = createAsyncThunk<void, ICategoryMutation>(
   "categories/addCategory",
@@ -147,6 +120,13 @@ export const editCategory = createAsyncThunk<void, {
     await axiosApi.put(`/categories/${id}.json`, editedCategory);
   }
 );
+
+
+export const getLoadingForm = (state: RootState) => state.categories.loading.addCategoryLoading;
+export const getLoadingAllCategories = (state: RootState) => state.categories.loading.fetchAllCategoryLoading;
+export const getLoadingDelete = (state: RootState) => state.categories.loading.deleteCategoryLoading;
+export const getCategory = (state: RootState) => state.categories.category;
+export const getCategories = (state: RootState) => state.categories.categories;
 
 
 export const {clearCategory} = categorySlice.actions;

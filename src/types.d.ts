@@ -1,5 +1,5 @@
 interface ICategory{
-  type: "income" | "expense";
+  type: string;
   name: string;
   id: string;
 }

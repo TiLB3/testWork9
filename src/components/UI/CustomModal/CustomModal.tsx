@@ -1,10 +1,9 @@
 import {Box, Modal} from "@mui/material";
 import type {PropsWithChildren} from "react";
-import {useAppSelector} from "../../../app/store/hooks.ts";
-import {getStateModal} from "../../../app/features/cartSlice.ts";
 
 interface Props extends PropsWithChildren {
   toggleModal: () => void;
+  isOpen: boolean;
 }
 
 const style = {
@@ -18,12 +17,10 @@ const style = {
   p: 4,
 };
 
-const CustomModal: React.FC<Props> = ({toggleModal, children}) => {
-  const isShowingModal = useAppSelector(getStateModal);
-
+const CustomModal: React.FC<Props> = ({toggleModal, children,isOpen}) => {
   return (
     <Modal
-      open={isShowingModal}
+      open={isOpen}
       onClose={toggleModal}
     >
       <Box sx={style}>
